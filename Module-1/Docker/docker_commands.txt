@@ -3,14 +3,14 @@
 docker run -it --rm \
 --network=? \
 --name ingest_script \
-ingest_data:0.1 \
+ingest_data:0.2 \
 --user=root \
 --password=root \
---host=? \
+--host=docker_pgdatabase_1 \
 --port=5432 \
 --db=ny_taxi \
---table_name=yellow_taxi_trips \
---url=https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz
+--table_name=green_taxi_trips \
+--url=https://github.com/DataTalksClub/nyc-tlc-data/releases/download/green/green_tripdata_2019-09.csv.gz
 
 
 

@@ -6,6 +6,18 @@ from time import time
 from sqlalchemy import create_engine
 
 
+def convert_type(df, dataset):
+# The only difference in the schema between two data sets is tpep.. and lpep..
+    if dataset == 'yellow':
+        df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
+        df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
+    elif dataset == 'green':
+        df.lpep_dropoff_datetime = pd.to_datetime(df.lpep_dropoff_datetime)
+        df.lpep_pickup_datetime = pd.to_datetime(df.lpep_pickup_datetime)
+    else:
+        return
+
+
 def main(params) -> None:
     user = params.user
     password = params.password
@@ -15,21 +27,24 @@ def main(params) -> None:
     table_name = params.table_name
     url = params.url
 
-    csv_name = url.rstrip('/')
+    csv_name = url.rsplit('/', 1)[-1]
+
+    # Finding which taxi color dataset is it
+    dataset = csv_name.split('_')[0]
     
     try:
         print('🚀 Downloading Dataset')
         os.system(f'wget {url} -O {csv_name}')
         print("👍🏼 Successfully Downloaded the Dataset")
     except ImportError:
-        print(IndexError)
+        print(ImportError)
 
 
     df_itr = pd.read_csv(csv_name, iterator=True, chunksize=100000)
     df = next(df_itr)
 
-    df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
-    df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
+    convert_type(df,dataset)
+
 
     try:
         engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{db}')
@@ -39,7 +54,7 @@ def main(params) -> None:
 
 
     df.head(n=0).to_sql(name=table_name, con=engine, if_exists='replace')
-    print('👍🏼 Created Table\'s Schema')
+    print('👍🏼 Created Table with schema')
 
     df.to_sql(name=table_name, con=engine, if_exists='append')
     print('⚡ Ingested chunk 1')
@@ -50,12 +65,9 @@ def main(params) -> None:
             t_start = time()
             
             df = next(df_itr)
-
-            df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
-            df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
+            convert_type(df,dataset)
 
             df.to_sql(name=table_name, con=engine, if_exists='append')
-
 
             print(f'⚡ Ingested chunk {count}, took {(time() - t_start):.3f} seconds')
             count += 1
