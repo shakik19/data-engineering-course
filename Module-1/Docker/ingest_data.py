@@ -32,12 +32,8 @@ def main(params) -> None:
     # Finding which taxi color dataset is it
     dataset = csv_name.split('_')[0]
     
-    try:
-        print('🚀 Downloading Dataset')
-        os.system(f'wget {url} -O {csv_name}')
-        print("👍🏼 Successfully Downloaded the Dataset")
-    except ImportError:
-        print(ImportError)
+    os.system(f'wget {url} -O {csv_name}')
+    print(f'👍🏼 Downloaded  {csv_name}')
 
 
     df_itr = pd.read_csv(csv_name, iterator=True, chunksize=100000)
@@ -45,16 +41,11 @@ def main(params) -> None:
 
     convert_type(df,dataset)
 
-
-    try:
-        engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{db}')
-        print('👍🏼 Connected to PostgresDB')
-    except ConnectionError:
-        print(ConnectionError)
-
+    engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{db}')
+    print('👍🏼 Connected to PostgresDB')
 
     df.head(n=0).to_sql(name=table_name, con=engine, if_exists='replace')
-    print('👍🏼 Created Table with schema')
+    print(f'👍🏼 Created {table_name} table')
 
     df.to_sql(name=table_name, con=engine, if_exists='append')
     print('⚡ Ingested chunk 1')
@@ -88,7 +79,5 @@ if __name__ == '__main__':
     parser.add_argument('--table_name', required=True, help='name of the table where we will write the results to')
     parser.add_argument('--url', required=True, help='url of the csv file')
     
-    
     args = parser.parse_args()
-    
     main(args)
