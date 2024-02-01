@@ -2,7 +2,7 @@ version: '3'
 
 services:
   pgdatabase:
-    image: postgres:13
+    image: postgres:14
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASS=${POSTGRES_PASS}
