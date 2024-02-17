@@ -50,3 +50,5 @@ if __name__ == '__main__':
    parser.add_argument('--end', required=True, help="Ending month")
 
    args = parser.parse_args()
+
+   download_processor(args)
