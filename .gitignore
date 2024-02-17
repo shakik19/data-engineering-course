@@ -8,7 +8,7 @@ share
 .ipynb_checkpoints
 *.json
 personal_resources
-
+*.parquet
 
 # Local .terraform directories
 **/.terraform/*

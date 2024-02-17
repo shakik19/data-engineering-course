@@ -18,14 +18,17 @@ def download_parquet(url: str):
 def download_processor(args: ap.Namespace):
     TAXI_COLOR = args.taxi_color.lower()
     YEAR = args.year
+    FROM = int(args.start)
+    TO = int(args.end) + 1
 
-    URL_BASE = f'https://d37ci6vzurychx.cloudfront.net/trip-data/{ TAXI_COLOR }_tripdata_{ YEAR }'
+
+    URL_BASE = f'https://d37ci6vzurychx.cloudfront.net/trip-data/{TAXI_COLOR}_tripdata_{YEAR}'
 
     tables: list = []
 
-    for i in range(1, 13):
+    for i in range(FROM, TO):
         month = f'0{i}' if i < 10 else i
-        URL = f'{ URL_BASE }-{ month }.parquet'
+        URL = f'{URL_BASE}-{month}.parquet'
 
         content = download_parquet(URL)
 
@@ -43,7 +46,7 @@ if __name__ == '__main__':
 
    parser.add_argument('--taxi_color', required=True,help="State taxi color green | yellow")
    parser.add_argument('--year', required=True, help="Specify year")
+   parser.add_argument('--start', required=True, help="Starting month")
+   parser.add_argument('--end', required=True, help="Ending month")
 
    args = parser.parse_args()
-
-   download_processor(args)
