@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: staging
+    database: fast-forward-412713
+    schema: ny_tripdata
+
+    tables:
+      - name: green_tripdata
+      - name: yellow_tripdata

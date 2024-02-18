@@ -48,5 +48,11 @@ if __name__ == '__main__':
    parser.add_argument('--end', required=True, help="Ending month")
    args = parser.parse_args()
 
+<<<<<<< HEAD
+   args = parser.parse_args()
+
+   download_processor(args)
+=======
    download_processor(args)
    upload_directory_with_transfer_manager(BUCKET, SOURCE_DIR)
+>>>>>>> 3e187d5878dc6f045b29acf32a6fbe925077b484
