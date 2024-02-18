@@ -1,8 +1,13 @@
 import requests as rq
-import pyarrow
 import pyarrow.parquet as pq
 import argparse as ap
+import dotenv
 from io import BytesIO
+from upload_dir_to_gcs import upload_directory_with_transfer_manager
+
+BUCKET = dotenv.get_key("../.env", key_to_get="GCP_BUCKET_NAME")
+SOURCE_DIR = dotenv.get_key("../.env", key_to_get="SOURCE_DIR")
+
 
 def download_parquet(url: str):
     print(f'⚡ Downloading { url.rsplit("/", 1)[-1] }')
@@ -21,10 +26,7 @@ def download_processor(args: ap.Namespace):
     FROM = int(args.start)
     TO = int(args.end) + 1
 
-
     URL_BASE = f'https://d37ci6vzurychx.cloudfront.net/trip-data/{TAXI_COLOR}_tripdata_{YEAR}'
-
-    tables: list = []
 
     for i in range(FROM, TO):
         month = f'0{i}' if i < 10 else i
@@ -34,11 +36,7 @@ def download_processor(args: ap.Namespace):
 
         if content:
             table = pq.read_table(content)
-            tables.append(table)
-    
-    final_file = pyarrow.concat_tables(tables)
-
-    pq.write_table(final_file, f'../tripdata/{ TAXI_COLOR }_tripdata_{ YEAR }.parquet')
+            pq.write_table(table, f'../tripdata/{TAXI_COLOR}/{TAXI_COLOR}_tripdata_{YEAR}-{month}.parquet')
 
 
 if __name__ == '__main__':
@@ -48,7 +46,13 @@ if __name__ == '__main__':
    parser.add_argument('--year', required=True, help="Specify year")
    parser.add_argument('--start', required=True, help="Starting month")
    parser.add_argument('--end', required=True, help="Ending month")
+   args = parser.parse_args()
 
+<<<<<<< HEAD
    args = parser.parse_args()
 
    download_processor(args)
+=======
+   download_processor(args)
+   upload_directory_with_transfer_manager(BUCKET, SOURCE_DIR)
+>>>>>>> 3e187d5878dc6f045b29acf32a6fbe925077b484
