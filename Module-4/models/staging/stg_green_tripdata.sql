@@ -30,7 +30,6 @@ select
     mta_tax,
     tip_amount,
     tolls_amount,
-    ehail_fee,
     imp_surcharge as improvement_surcharge,
     total_amount,
     coalesce(
