@@ -1,5 +1,10 @@
 from pathlib import Path
 from google.cloud.storage import Client, transfer_manager
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 
 
 def upload_directory_with_transfer_manager(bucket_name, source_directory, workers=6):
