@@ -35,7 +35,7 @@ models:
         description: ""
         tests:
           - relationships:
-              field: location_id
+              field: LocationID
               to: ref('taxi_zone_lookup')
               severity: warn
 
@@ -44,7 +44,7 @@ models:
         description: ""
         tests:
           - relationships:
-              field: location_id
+              field: LocationID
               to: ref('taxi_zone_lookup')
               severity: warn
 
@@ -103,15 +103,15 @@ models:
       - name: payment_type
         data_type: int64
         description: ""
-
-      - name: payment_type_description
-        data_type: string
-        description: ""
         tests:
           - accepted_values:
               values: "{{ var('payment_type_values') }}"
               severity: warn
               quote: false
+              
+      - name: payment_type_description
+        data_type: string
+        description: ""
 
   - name: stg_yellow_tripdata
     description: ""
@@ -138,7 +138,7 @@ models:
         description: ""
         tests:
           - relationships:
-              field: location_id
+              field: LocationID
               to: ref('taxi_zone_lookup')
               severity: warn
 
@@ -147,9 +147,10 @@ models:
         description: ""
         tests:
           - relationships:
-              field: location_id
+              field: LocationID
               to: ref('taxi_zone_lookup')
               severity: warn
+
       - name: pickup_datetime
         data_type: timestamp
         description: ""
@@ -205,12 +206,12 @@ models:
       - name: payment_type
         data_type: int64
         description: ""
-
-      - name: payment_type_description
-        data_type: string
-        description: ""
         tests:
           - accepted_values:
               values: "{{ var('payment_type_values') }}"
               severity: warn
               quote: false
+
+      - name: payment_type_description
+        data_type: string
+        description: ""
