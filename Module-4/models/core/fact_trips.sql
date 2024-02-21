@@ -1,6 +1,6 @@
 {{
     config(
-        materialized='table',
+        materialized='incremental',
         partition_by={
         "field": "pickup_datetime",
         "data_type": "timestamp",
@@ -47,7 +47,6 @@ SELECT
     trips_unioned.store_and_fwd_flag, 
     trips_unioned.passenger_count, 
     trips_unioned.trip_distance, 
-    trips_unioned.trip_type, 
     trips_unioned.fare_amount, 
     trips_unioned.extra, 
     trips_unioned.mta_tax, 
@@ -68,3 +67,6 @@ FROM
     ON
     trips_unioned.dropoff_location_id = dropoff_zone.location_id
 
+{% if is_incremental() %}
+WHERE pickup_datetime > (select max(pickup_datetime) from {{ this }})
+{% endif %}

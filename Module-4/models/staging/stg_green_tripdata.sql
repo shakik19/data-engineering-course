@@ -1,10 +1,18 @@
-{{ config(materialized="view") }}
+{{
+    config(
+        materialized='incremental',
+        unique_key='trip_id'
+    )
+}}
 
 with
     tripdata as (
         select *, row_number() over (partition by vendor_id, pickup_datetime) as rn
         from {{ source("staging", "green_tripdata") }}
-        where vendor_id is not null
+        where pickup_datetime
+        BETWEEN CAST("2019-01-01" AS TIMESTAMP)
+            AND CAST("2020-12-31" AS TIMESTAMP)
+        AND vendor_id is not null
     )
 select
     -- identifiers
@@ -22,7 +30,6 @@ select
     store_and_fwd_flag,
     passenger_count,
     trip_distance,
-    {{ dbt.safe_cast("trip_type", api.Column.translate_type("integer")) }} as trip_type,
 
     -- payment info
     fare_amount,
@@ -39,5 +46,11 @@ select
 from tripdata
 where rn = 1
 
--- dbt build --select <model_name> --vars '{'is_test_run': 'false'}'
-{% if var("is_test_run", default=true) %} limit 100 {% endif %}
+{% if is_incremental() %}
+AND pickup_datetime > (select max(pickup_datetime) from {{ this }})
+{% endif %}
+
+-- dbt build --select stg_green_tripdata --vars '{'is_test_run': 'false'}'
+{% if var("is_test_run", default=true) %}
+limit 100
+{% endif %}
