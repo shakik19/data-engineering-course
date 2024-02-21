@@ -21,12 +21,12 @@ def download_parquet(url: str):
     
 
 def download_processor(args: ap.Namespace):
-    TAXI_COLOR = args.taxi_color.lower()
+    TYPE = args.type.lower()
     YEAR = args.year
     FROM = int(args.start)
     TO = int(args.end) + 1
 
-    URL_BASE = f'https://d37ci6vzurychx.cloudfront.net/trip-data/{TAXI_COLOR}_tripdata_{YEAR}'
+    URL_BASE = f'https://d37ci6vzurychx.cloudfront.net/trip-data/{TYPE}_tripdata_{YEAR}'
 
     for i in range(FROM, TO):
         month = f'0{i}' if i < 10 else i
@@ -36,23 +36,17 @@ def download_processor(args: ap.Namespace):
 
         if content:
             table = pq.read_table(content)
-            pq.write_table(table, f'../tripdata/{TAXI_COLOR}/{TAXI_COLOR}_tripdata_{YEAR}-{month}.parquet')
+            pq.write_table(table, f'../tripdata/{TYPE}/{TYPE}_tripdata_{YEAR}-{month}.parquet')
 
 
 if __name__ == '__main__':
    parser = ap.ArgumentParser(description="A cli tool to download ny taxi data for any given year")
 
-   parser.add_argument('--taxi_color', required=True,help="State taxi color green | yellow")
+   parser.add_argument('--type', required=True,help="State taxi color green | yellow")
    parser.add_argument('--year', required=True, help="Specify year")
    parser.add_argument('--start', required=True, help="Starting month")
    parser.add_argument('--end', required=True, help="Ending month")
    args = parser.parse_args()
 
-<<<<<<< HEAD
-   args = parser.parse_args()
-
-   download_processor(args)
-=======
-   download_processor(args)
+   # download_processor(args)
    upload_directory_with_transfer_manager(BUCKET, SOURCE_DIR)
->>>>>>> 3e187d5878dc6f045b29acf32a6fbe925077b484
