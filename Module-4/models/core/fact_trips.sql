@@ -1,7 +1,7 @@
 {{
     config(
         materialized='incremental',
-        unique_key="trip_id"
+        unique_key="trip_id",
         partition_by={
         "field": "pickup_datetime",
         "data_type": "timestamp",
