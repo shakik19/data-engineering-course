@@ -10,6 +10,7 @@ share
 personal_resources
 *.parquet
 tripdata
+dataset
 
 # Local .terraform directories
 **/.terraform/*
